@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./${{ matrix.distro }}
-          file: ./${{ matrix.distro }}/Dockerfile
+          file: ./${{ matrix.distro }}/Containerfile
           platforms: linux/arm64
           push: true
           build-args: |
