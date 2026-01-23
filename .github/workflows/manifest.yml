@@ -1,0 +1,41 @@
+name: Create multi-arch manifests
+
+on:
+  workflow_run:
+    workflows:
+      - Build amd64 images
+      - Build arm64 images
+    types:
+      - completed
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+
+    strategy:
+      matrix:
+        distro: [ debian, alpine ]
+        variant: [ full, slim ]
+
+    steps:
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push manifest
+        run: |
+          TAG_SUFFIX=""
+          if [ "${{ matrix.variant }}" = "slim" ]; then
+            TAG_SUFFIX="-slim"
+          fi
+
+          docker buildx imagetools create \
+            -t ghcr.io/krbrs/weechat-container:latest-${{ matrix.distro }}${TAG_SUFFIX} \
+            ghcr.io/krbrs/weechat-container:latest-${{ matrix.distro }}${TAG_SUFFIX}-amd64 \
+            ghcr.io/krbrs/weechat-container:latest-${{ matrix.distro }}${TAG_SUFFIX}-arm64
