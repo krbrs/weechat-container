@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Krbrs <krbrs@github>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 name: Build amd64 images
 
 on:
