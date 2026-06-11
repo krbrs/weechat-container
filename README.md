@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2021-2025 Sébastien Helleu <flashcode@flashtux.org>
+SPDX-FileCopyrightText: 2021-2026 Sébastien Helleu <flashcode@flashtux.org>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
@@ -63,7 +63,11 @@ Run with custom home directories on host to persist data (WeeChat ≥ 3.2, using
 ```bash
 mkdir -p ~/.weechat-container/config ~/.weechat-container/data ~/.weechat-container/cache
 chmod 777 ~/.weechat-container/config ~/.weechat-container/data ~/.weechat-container/cache
-docker run -it -v $HOME/.weechat-container/config:/home/user/.config/weechat -v $HOME/.weechat-container/data:/home/user/.local/share/weechat -v $HOME/.weechat-container/cache:/home/user/.cache/weechat weechat/weechat
+docker run -it \
+    -v $HOME/.weechat-container/config:/home/user/.config/weechat \
+    -v $HOME/.weechat-container/data:/home/user/.local/share/weechat \
+    -v $HOME/.weechat-container/cache:/home/user/.cache/weechat \
+    weechat/weechat
 ```
 
 Run with a custom single home directory on host to persist data (any WeeChat version):
@@ -71,7 +75,10 @@ Run with a custom single home directory on host to persist data (any WeeChat ver
 ```bash
 mkdir -p ~/.weechat-container
 chmod 777 ~/.weechat-container
-docker run -it -v $HOME/.weechat-container:/home/user/.weechat weechat/weechat weechat -d /home/user/.weechat
+docker run -it \
+    -v $HOME/.weechat-container:/home/user/.weechat \
+    weechat/weechat \
+    weechat -d /home/user/.weechat
 ```
 
 ## Build
@@ -105,10 +112,73 @@ Build a Debian-based image with WeeChat 4.3.2, directly with docker:
 docker build -f debian/Containerfile --build-arg VERSION=4.3.2 .
 ```
 
+## Update image
+
+### Pull the latest image
+
+First pull the latest image:
+
+```bash
+docker pull weechat/weechat:latest
+```
+
+Or for Alpine:
+
+```bash
+docker pull weechat/weechat:latest-alpine
+```
+
+### Recreate the container
+
+This preserves your persistent data.
+
+If you use persistent volumes (recommended):
+
+```bash
+docker stop weechat
+docker rm weechat
+docker run -it \
+  -v $HOME/.weechat-container/config:/home/user/.config/weechat \
+  -v $HOME/.weechat-container/data:/home/user/.local/share/weechat \
+  -v $HOME/.weechat-container/cache:/home/user/.cache/weechat \
+  weechat/weechat:latest
+```
+
+If you use a single home directory:
+
+```bash
+docker stop weechat
+docker rm weechat
+docker run -it \
+  -v $HOME/.weechat-container:/home/user/.weechat \
+  weechat/weechat:latest \
+  weechat -d /home/user/.weechat
+```
+
+### Remove the old image
+
+After verifying the new container works:
+
+```bash
+docker image prune -f
+```
+
+Or to remove only the specific old WeeChat image:
+
+```bash
+docker images | grep weechat/weechat
+docker rmi <old-image-id>
+```
+
+> [!NOTE]
+> Your WeeChat configuration, logs, and scripts are preserved as long as you use volume mounts.\
+> Always ensure you have backups before updating.\
+> The old image will continue taking disk space until pruned.
+
 ## Copyright
 
 <!-- REUSE-IgnoreStart -->
-Copyright © 2021-2025 [Sébastien Helleu](https://github.com/flashcode)
+Copyright © 2021-2026 [Sébastien Helleu](https://github.com/flashcode)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
