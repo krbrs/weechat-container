@@ -11,6 +11,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 Build of WeeChat images using [Docker](https://www.docker.com/) (default) or [Podman](https://podman.io/).
 
+> [!IMPORTANT]
+> The container files have moved to the WeeChat repository, in directory [tools/container](https://github.com/weechat/weechat/tree/main/tools/container).\
+> Images are still published on the [Docker Hub](https://hub.docker.com/r/weechat/weechat).\
+> **This project is archived and should no longer be used!**
+
 ## Requirements
 
 The following packages are required to build images:
